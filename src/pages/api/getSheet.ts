@@ -13,7 +13,7 @@ function toEmployeeData(employee: EmployeeReq): EmployeeData {
 }
 
 function toEmployeesData(employees: EmployeeReq[]): EmployeeData[] {
-    let res: EmployeeData[] = [];
+    const res: EmployeeData[] = [];
     employees.forEach(e => res.push(toEmployeeData(e)));
     return res;
 }
