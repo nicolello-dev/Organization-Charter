@@ -24,14 +24,16 @@ async function createNewDatapointWithEmployees(r:EmployeeReq[]) {
         data: {
         }
     });
+    let employeeData = [];
     for(const employee of r) {
-        await prisma.employee.create({
-            data: {
-                ...toEmployeeData(employee),
-                datapointId: dp.id
-            }
+        employeeData.push({
+            ...toEmployeeData(employee),
+            datapointId: dp.id
         })
     }
+    prisma.employee.createMany({
+        data: employeeData
+    })
 }
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse<EmployeeData[]>) {
