@@ -24,14 +24,14 @@ async function createNewDatapointWithEmployees(r:EmployeeReq[]) {
         data: {
         }
     });
-    let employeeData = [];
+    const employeeData = [];
     for(const employee of r) {
         employeeData.push({
             ...toEmployeeData(employee),
             datapointId: dp.id
         })
     }
-    prisma.employee.createMany({
+    await prisma.employee.createMany({
         data: employeeData
     })
 }
