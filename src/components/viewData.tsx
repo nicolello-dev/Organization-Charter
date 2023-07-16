@@ -1,4 +1,4 @@
-import { Employee } from "@prisma/client";
+import type { Employee } from "@prisma/client";
 
 export default function ViewData(props: {data: Employee[] | undefined}){
     const { data } = props;
@@ -37,14 +37,14 @@ export default function ViewData(props: {data: Employee[] | undefined}){
             {
                 Object.keys(tribeHash).map(tribe_name => {
                     const tribe_lead = tribeHash[tribe_name]?.lead;
-                    return <div className="w-6/12 text-center bg-[#1c4587] m-3 p-3 rounded-2xl text-white max-h-screen overflow-y-auto">
+                    return <div key={"tribe"+tribe_name} className="w-6/12 text-center bg-[#1c4587] m-3 p-3 rounded-2xl text-white max-h-screen overflow-y-auto">
                         <div className="m-3">
                             <h3>{tribe_name}</h3>
                             <h5>{tribe_lead}</h5>
                         </div>
                         <div className="flex flex-row flex-wrap justify-center">
                         {tribeHash[tribe_name]?.employees.map(e => {
-                            return <pre className="m-2">
+                            return <pre key={"name"+e.team_member} className="m-2">
                                 {e.team_member}
                             </pre>
                         })}

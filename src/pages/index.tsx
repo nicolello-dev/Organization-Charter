@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Filter from "@/components/filter"
 import ViewData from "@/components/viewData";
 
-import { Employee } from "@prisma/client";
+import type { Employee } from "@prisma/client";
 
 export default function Home() {
 
