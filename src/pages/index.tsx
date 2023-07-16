@@ -1,19 +1,20 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
 
-import type { EmployeeData } from "@/components/types";
+import { useEffect, useState } from "react";
 
 import Filter from "@/components/filter"
 import ViewData from "@/components/viewData";
 
+import { Employee } from "@prisma/client";
+
 export default function Home() {
 
-  const [data, setData] = useState<EmployeeData | undefined>(undefined)
+  const [data, setData] = useState<Employee[] | undefined>(undefined)
 
   useEffect(() => {
     fetch('/api/getSheet')
       .then(r => r.json())
-      .then((r: EmployeeData) => setData(r))
+      .then((r: Employee[]) => setData(r))
       .catch(err => console.error(err));
   }, []);
 
