@@ -90,28 +90,48 @@ export default function ViewData(props: {data: Employee[] | undefined}){
     return (
         <div className="flex flex-wrap justify-center">
             {
-                Object.keys(areaHash).map(area_name => {
-                    const area_lead = areaHash[area_name]?.lead;
-                    return <div key={"area"+area_name} className="w-6/12 max-w-lg text-center border-2 m-3 p-3 rounded-2xl text-black border-area/25">
-                        <div className="m-3">
-                            <h3>{area_name}</h3>
-                            <h5>{area_lead}</h5>
-                        </div>
+                Object.keys(tribeHash).map(tribe_name => {
+                    const tribe_lead = tribeHash[tribe_name]?.functions[0]?.areas[0]?.teams[0]?.employees[0]?.tribe_lead;
+                    return <div key={"tribe"+tribe_name} className="w-6/12 max-w-lg text-center border-2 m-3 p-3 rounded-2xl text-black border-black">
+                    <div className="m-3">
+                        <h3>{tribe_name}</h3>
+                        <h5>{tribe_lead}</h5>
+                    </div>
+                    {
+                    tribeHash[tribe_name]?.functions.map((fun, i) => <div key={"function" + i.toString()} className="p-3 m-2 rounded-xl border-2 border-function/25">
+                    <div className="m-3">
+                        <h3>{fun.name}</h3>
+                        <h5>{fun.lead}</h5>
                         {
-                        areaHash[area_name]?.teams.map((team, i) => <div key={"team" + i.toString()} className="p-3 m-2 rounded-xl border-2 border-black/25">
-                            <div className="m-3">
-                                <h3>{team.name}</h3>
-                                <h5>{team.lead}</h5>
-                            </div>
-                            <div className="flex flex-row flex-wrap justify-center">
-                                {team.employees.map((e, i) => <p key={"name"+i.toString()} className="m-2">
-                                        {e.team_member}
-                                    </p>
-                                )}
-                            </div>
-                        </div>)
+                            fun.areas.map(area => {
+                                const area_name = area.name;
+                                const area_lead = areaHash[area_name]?.lead;
+                                return <div key={"area"+area_name} className="p-3 m-2 rounded-xl border-2 border-area">
+                                    <div className="m-3">
+                                        <h3>{area_name}</h3>
+                                        <h5>{area_lead}</h5>
+                                    </div>
+                                    {
+                                    areaHash[area_name]?.teams.map((team, i) => <div key={"team" + i.toString()} className="p-3 m-2 rounded-xl border-2 border-dashed bg-white border-purple-300">
+                                        <div className="m-3">
+                                            <h3>{team.name}</h3>
+                                            <h5>{team.lead}</h5>
+                                        </div>
+                                        <div className="flex flex-row flex-wrap justify-center">
+                                            {team.employees.map((e, i) => <p key={"name"+i.toString()} className="m-2">
+                                                    {e.team_member}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>)
+                                    }
+                                </div>
+                            })
                         }
                     </div>
+                </div>)
+                    }
+                </div>
                 })
             }
         </div>
