@@ -1,54 +1,86 @@
 import type { Employee } from "@prisma/client";
 
+interface Team {
+    name: string
+    lead: string
+    employees: Employee[]
+}
+
+interface Area {
+    lead: string | undefined
+    teams: Team[]
+}
+
+interface FunctionType {
+    lead: string | undefined
+    areas: Area[]
+}
+
+interface Tribe {
+    lead: string | undefined
+    functions: FunctionType[]
+}
+
 export default function ViewData(props: {data: Employee[] | undefined}){
     const { data } = props;
     if(data == undefined) {
         return <h1>Data not yet loaded. Please hang in while the request compiles. If this is the first request of the day, it might take up to 20 seconds</h1>
     }
     // Tribe -> Function -> Area -> Team
-    const tribeHash: {[key: string]: {lead: string, employees: Employee[]}} = {};
-    const functionHash: {[key: string]: {lead: string, employees: Employee[]}} = {};
-    const areaHash: {[key: string]: {lead: string, employees: Employee[]}} = {};
-    const teamHash: {[key: string]: {lead: string, employees: Employee[]}} = {};
+    const tribeHash: Tribe = { lead: undefined, functions: []};
+    const functionHash: FunctionType = { lead: undefined, areas: []};
+    const areaHash: {[key: string]: Area} = {};
+    const teamHash: {[key: string]: Team} = {};
     for (const employee of data) {
-        if(tribeHash[employee.tribe]?.employees) {
-            tribeHash[employee.tribe]?.employees.push(employee);
+        const team = teamHash[employee.team];
+        if(team) {
+            team.employees.push(employee);
         } else {
-            tribeHash[employee.tribe] = {lead: employee.tribe_lead, employees: [employee]}
-        }
-        if(functionHash[employee.function]?.employees) {
-            functionHash[employee.function]?.employees.push(employee);
-        } else {
-            functionHash[employee.tribe] = {lead: employee.function_lead, employees: [employee]}
-        }
-        if(areaHash[employee.area]?.employees) {
-            areaHash[employee.area]?.employees.push(employee);
-        } else {
-            areaHash[employee.tribe] = {lead: employee.area_lead, employees: [employee]}
-        }
-        if(teamHash[employee.team]?.employees) {
-            teamHash[employee.team]?.employees.push(employee);
-        } else {
-            teamHash[employee.tribe] = {lead: employee.team_lead, employees: [employee]}
+            teamHash[employee.team] = {
+                name: employee.team,
+                lead: employee.team_lead,
+                employees: [employee]
+            }
         }
     }
+    for (const team of Object.values(teamHash)) {
+        if(team.employees[0]) {
+            const area = areaHash[team.employees[0]?.area]
+            if(area) {
+                area.teams.push(team);
+            } else {
+                areaHash[team.employees[0]?.area] = {
+                    lead: team.employees[0].area_lead,
+                    teams: [team]
+                }
+            }
+        }
+    }
+    console.log(areaHash);
     return (
-        <div className="flex">
+        <div className="flex flex-wrap justify-center">
             {
-                Object.keys(tribeHash).map(tribe_name => {
-                    const tribe_lead = tribeHash[tribe_name]?.lead;
-                    return <div key={"tribe"+tribe_name} className="w-6/12 text-center bg-[#1c4587] m-3 p-3 rounded-2xl text-white max-h-screen overflow-y-auto">
+                Object.keys(areaHash).map(area_name => {
+                    const area_lead = teamHash[area_name]?.lead;
+                    return <div key={"area"+area_name} className="w-6/12 max-w-lg text-center border-2 m-3 p-3 rounded-2xl text-black">
                         <div className="m-3">
-                            <h3>{tribe_name}</h3>
-                            <h5>{tribe_lead}</h5>
+                            <h3>{area_name}</h3>
+                            <h5>{area_lead}</h5>
                         </div>
-                        <div className="flex flex-row flex-wrap justify-center">
-                        {tribeHash[tribe_name]?.employees.map(e => {
-                            return <pre key={"name"+e.team_member} className="m-2">
-                                {e.team_member}
-                            </pre>
-                        })}
-                        </div>
+                        {
+                        areaHash[area_name]?.teams.map((team, i) => <div key={"team" + i.toString()} className="p-3 m-2 rounded-xl border-2">
+                            <div className="m-3">
+                                <h3>{team.name}</h3>
+                                <h5>{team.lead}</h5>
+                            </div>
+                            <div className="flex flex-row flex-wrap justify-center">
+                                {team.employees.map(e => <pre key={"name"+e.team_member} className="m-2">
+                                        {e.team_member}
+                                    </pre>
+                                )}
+                            </div>
+                        </div>)
+                        }
                     </div>
                 })
             }
