@@ -86,7 +86,6 @@ export default function ViewData(props: {data: Employee[] | undefined}){
             }
         }
     }
-    console.log(tribeHash)
     return (
         <div className="flex flex-wrap justify-center">
             {

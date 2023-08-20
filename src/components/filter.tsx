@@ -10,8 +10,8 @@ export default function Filters() {
             Filters:
         </h1>
             {
-                filters.map(filter => 
-                        <>
+                filters.map((filter, i) => 
+                        <div key={i} className="text-center">
                             <p className="m-2">{filter}:</p>
                             <input className="border-gray-300 border-2 mb-4" type="text"/>
                         </>
