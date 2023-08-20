@@ -14,7 +14,7 @@ export default function Filters() {
                         <div key={i} className="text-center">
                             <p className="m-2">{filter}:</p>
                             <input className="border-gray-300 border-2 mb-4" type="text"/>
-                        </>
+                        </div>
                     )
             }
         <button className="bg-black text-white p-3 m-4 rounded-xl">
