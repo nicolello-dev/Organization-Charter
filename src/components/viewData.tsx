@@ -1,27 +1,5 @@
+import { FunctionType, Tribe, Area, Team } from "@/types/data";
 import type { Employee } from "@prisma/client";
-
-interface Team {
-    name: string
-    lead: string
-    employees: Employee[]
-}
-
-interface Area {
-    name: string
-    lead: string | undefined
-    teams: Team[]
-}
-
-interface FunctionType {
-    name: string
-    lead: string | undefined
-    areas: Area[]
-}
-
-interface Tribe {
-    lead: string | undefined
-    functions: FunctionType[]
-}
 
 export default function ViewData(props: {data: Employee[] | undefined}){
     const { data } = props;
