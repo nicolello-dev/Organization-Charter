@@ -12,9 +12,10 @@ export default function Filters() {
 
     function handleFilterChange(e: React.ChangeEvent<HTMLInputElement>, filterName: string) {
         const newValue = e.target.value;
-        const newObj = filtersctx.filtersData;
-        newObj[filterName] = newValue;
-        filtersctx.filtersData = newObj;
+        filtersctx.filtersData = {
+            ...filtersctx.filtersData,
+            [filterName]: newValue
+        }
     }
 
     return (
