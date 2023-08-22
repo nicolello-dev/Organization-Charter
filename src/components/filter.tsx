@@ -8,7 +8,6 @@ export default function Filters() {
     ];
 
     const filtersctx = useContext(filterContext);
-    console.log(filtersctx);
 
     function handleFilterChange(e: React.ChangeEvent<HTMLInputElement>, filterName: string) {
         const newValue = e.target.value;

@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useRef } from "react";
 
 import Filter from "@/components/filter"
 import ViewData from "@/components/viewData";
@@ -38,6 +38,11 @@ export default function Home() {
       .then((r: Employee[]) => setData(r))
       .catch(err => console.error(err));
   }, []);
+
+  const filterctx = useContext(filterContext)
+
+  useEffect(() => {
+  }, [filterctx.filtersData])
 
   return (
     <>
