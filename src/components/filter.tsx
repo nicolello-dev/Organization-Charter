@@ -1,4 +1,4 @@
-import { FiltersType, filterContext } from "@/pages";
+import { type FiltersType, filterContext } from "@/pages";
 import { useContext } from "react";
 
 import { leadmod } from "@/constants/constants";

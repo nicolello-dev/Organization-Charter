@@ -1,5 +1,5 @@
-import { FiltersType, filterContext } from "@/pages";
-import { FunctionType, Tribe, Area, Team } from "@/types/data";
+import { type FiltersType, filterContext } from "@/pages";
+import type { FunctionType, Tribe, Area, Team } from "@/types/data";
 import type { Employee } from "@prisma/client";
 import { filters } from "@/constants/filters";
 
@@ -22,12 +22,12 @@ export default function ViewData(props: {rawData: Employee[] | undefined}){
     // filter data when filters change
     const data = rawData.filter(employee => {
         return filters.every(fname => {
-            const empData = employee[fname as keyof Employee]; // Employee data
+            const empData = employee[fname as keyof Employee] || ""; // Employee data
             const empregex = new RegExp(filtersCtx.filters[fname as keyof FiltersType] || ".*"); // Employee regex
-            const empDataLead = employee[fname + leadmod as keyof Employee]; // Employee data for leads
+            const empDataLead = employee[fname + leadmod as keyof Employee] || ""; // Employee data for leads
             const empregexLead = new RegExp(filtersCtx.filters[fname + leadmod as keyof FiltersType] || ".*"); // Employee regex for lead
-            return empData!.match(empregex) !== null
-            && empDataLead!.match(empregexLead) !== null
+            return empData.match(empregex) !== null
+            && empDataLead.match(empregexLead) !== null
         })
     })
     for (const employee of data) {
