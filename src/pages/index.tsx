@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { createContext, useEffect, useState } from "react";
 
 import Filter from "@/components/filter"
 import ViewData from "@/components/viewData";
