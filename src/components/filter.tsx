@@ -1,6 +1,8 @@
 import { FiltersType, filterContext } from "@/pages";
 import { useContext } from "react";
 
+import { leadmod } from "@/constants/constants";
+
 export default function Filters() {
 
     const filtersNames = [
@@ -31,8 +33,8 @@ export default function Filters() {
                                 handleFilterChange(e, filter);
                             }}/>
                             <p className="m-2">{filter} lead:</p>
-                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filters[filter + ' lead' as keyof FiltersType]} onChange={(e) => {
-                                handleFilterChange(e, filter + ' lead');
+                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filters[filter + leadmod as keyof FiltersType]} onChange={(e) => {
+                                handleFilterChange(e, filter + leadmod);
                             }}/>
                         </div>
                     )

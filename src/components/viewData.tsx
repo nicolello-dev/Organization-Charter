@@ -1,16 +1,35 @@
+import { FiltersType, filterContext } from "@/pages";
 import { FunctionType, Tribe, Area, Team } from "@/types/data";
 import type { Employee } from "@prisma/client";
+import { filters } from "@/constants/filters";
 
-export default function ViewData(props: {data: Employee[] | undefined}){
-    const { data } = props;
-    if(data == undefined) {
+import { useContext } from "react";
+import { leadmod } from "@/constants/constants";
+
+export default function ViewData(props: {rawData: Employee[] | undefined}){
+    const filtersCtx = useContext(filterContext);
+
+    const { rawData } = props;
+    if(rawData == undefined) {
         return <h1>Data not yet loaded. Please hang in while the request compiles. If this is the first request of the day, it might take up to 20 seconds</h1>
     }
+
     // Tribe -> Function -> Area -> Team
     const tribeHash: {[key: string]: Tribe} = {};
     const functionHash: {[key: string]: FunctionType} = {};
     const areaHash: {[key: string]: Area} = {};
     const teamHash: {[key: string]: Team} = {};
+    // filter data when filters change
+    const data = rawData.filter(employee => {
+        return filters.every(fname => {
+            const empData = employee[fname as keyof Employee]; // Employee data
+            const empregex = new RegExp(filtersCtx.filters[fname as keyof FiltersType] || ".*"); // Employee regex
+            const empDataLead = employee[fname + leadmod as keyof Employee]; // Employee data for leads
+            const empregexLead = new RegExp(filtersCtx.filters[fname + leadmod as keyof FiltersType] || ".*"); // Employee regex for lead
+            return empData!.match(empregex) !== null
+            && empDataLead!.match(empregexLead) !== null
+        })
+    })
     for (const employee of data) {
         const team = teamHash[employee.team];
         if(team) {

@@ -5,15 +5,15 @@ import { createContext, useEffect, useState } from "react";
 import Filter from "@/components/filter"
 import ViewData from "@/components/viewData";
 
-import type { Employee } from "@prisma/client";
+import { filters } from "@/constants/filters";
 
-const filters = [
-  'team', 'area', 'function', 'tribe'
-];
-const filter: {[key: string]: string} = {};
+import type { Employee } from "@prisma/client";
+import { leadmod } from "@/constants/constants";
+
+const filter: FiltersType = {} as FiltersType;
 filters.forEach(f => {
-  filter[f] = '*';
-  filter[f + ' lead'] = "*";
+  filter[f as keyof FiltersType] = '';
+  filter[f + leadmod as keyof FiltersType] = '';
 })
 
 export type FiltersType = {
@@ -42,16 +42,7 @@ export const filterContext = createContext<filterContextType>({
 export default function Home() {
 
   const [employees, setEmployees] = useState<Employee[] | undefined>(undefined);
-  const [filters, setFilters] = useState<FiltersType>({
-    "team": "*",
-    "team lead": "*",
-    "area": "*",
-    "area lead": "*",
-    "function": "*",
-    "function lead": "*",
-    "tribe": "*",
-    "tribe lead": "*"
-  });
+  const [filters, setFilters] = useState<FiltersType>(filter as FiltersType);
 
   useEffect(() => {
     fetch('/api/getSheet')
@@ -69,12 +60,12 @@ export default function Home() {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-white dark:bg-black">
         <filterContext.Provider value={{
-          filters: filter as FiltersType,
+          filters: filters as FiltersType,
           setFilters: setFilters,
           employees: employees
         }}>
           <Filter/>
-          <ViewData data={employees}/>
+          <ViewData rawData={employees}/>
         </filterContext.Provider>
       </main>
     </>
