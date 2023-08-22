@@ -87,6 +87,7 @@ export default function ViewData(props: {data: Employee[] | undefined}){
         }
     }
     return (
+        <>
         <div className="flex flex-wrap justify-center">
             {
                 Object.keys(tribeHash).map(tribe_name => {
@@ -134,5 +135,6 @@ export default function ViewData(props: {data: Employee[] | undefined}){
                 })
             }
         </div>
+        </>
     )
 }

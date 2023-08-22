@@ -1,15 +1,36 @@
 import Head from "next/head";
 
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import Filter from "@/components/filter"
 import ViewData from "@/components/viewData";
 
 import type { Employee } from "@prisma/client";
 
+const filters = [
+  'team', 'area', 'function', 'tribe'
+];
+const filter: {[key: string]: string} = {};
+filters.forEach(f => {
+  filter[f] = '*';
+  filter[f + ' lead'] = "*";
+})
+
+type filterContextType = {
+  filtersData: {[key: string]: string},
+  data: Employee[] | undefined,
+  setData: React.Dispatch<React.SetStateAction<any>> // Type function
+}
+
+export const filterContext = createContext<filterContextType>({
+  filtersData: filter,
+  data: undefined,
+  setData: () => undefined
+});
+
 export default function Home() {
 
-  const [data, setData] = useState<Employee[] | undefined>(undefined)
+  const [data, setData] = useState<Employee[] | undefined>(undefined);
 
   useEffect(() => {
     fetch('/api/getSheet')
@@ -26,8 +47,14 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-white dark:bg-black">
-        <Filter/>
-        <ViewData data={data}/>
+        <filterContext.Provider value={{
+          filtersData: filter,
+          data,
+          setData
+        }}>
+          <Filter/>
+          <ViewData data={data}/>
+        </filterContext.Provider>
       </main>
     </>
   );
