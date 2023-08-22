@@ -16,33 +16,49 @@ filters.forEach(f => {
   filter[f + ' lead'] = "*";
 })
 
+export type FiltersType = {
+  team: string,
+  "team lead": string,
+  area: string,
+  "area lead": string,
+  function: string,
+  "function lead": string,
+  tribe: string,
+  "tribe lead": string
+}
+
 type filterContextType = {
-  filtersData: {[key: string]: string},
-  data: Employee[] | undefined,
-  setData: React.Dispatch<React.SetStateAction<any>> // Type function
+  filters: FiltersType
+  setFilters: React.Dispatch<React.SetStateAction<FiltersType>>
+  employees: Employee[] | undefined
 }
 
 export const filterContext = createContext<filterContextType>({
-  filtersData: filter,
-  data: undefined,
-  setData: () => undefined
+  filters: filter as FiltersType,
+  setFilters: () => filter as FiltersType,
+  employees: undefined
 });
 
 export default function Home() {
 
-  const [data, setData] = useState<Employee[] | undefined>(undefined);
+  const [employees, setEmployees] = useState<Employee[] | undefined>(undefined);
+  const [filters, setFilters] = useState<FiltersType>({
+    "team": "*",
+    "team lead": "*",
+    "area": "*",
+    "area lead": "*",
+    "function": "*",
+    "function lead": "*",
+    "tribe": "*",
+    "tribe lead": "*"
+  });
 
   useEffect(() => {
     fetch('/api/getSheet')
       .then(r => r.json())
-      .then((r: Employee[]) => setData(r))
+      .then((r: Employee[]) => setEmployees(r))
       .catch(err => console.error(err));
   }, []);
-
-  const filterctx = useContext(filterContext)
-
-  useEffect(() => {
-  }, [filterctx.filtersData])
 
   return (
     <>
@@ -53,12 +69,12 @@ export default function Home() {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-white dark:bg-black">
         <filterContext.Provider value={{
-          filtersData: filter,
-          data,
-          setData
+          filters: filter as FiltersType,
+          setFilters: setFilters,
+          employees: employees
         }}>
           <Filter/>
-          <ViewData data={data}/>
+          <ViewData data={employees}/>
         </filterContext.Provider>
       </main>
     </>

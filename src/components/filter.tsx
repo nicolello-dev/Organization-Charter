@@ -1,4 +1,4 @@
-import { filterContext } from "@/pages";
+import { FiltersType, filterContext } from "@/pages";
 import { useContext } from "react";
 
 export default function Filters() {
@@ -11,10 +11,10 @@ export default function Filters() {
 
     function handleFilterChange(e: React.ChangeEvent<HTMLInputElement>, filterName: string) {
         const newValue = e.target.value;
-        filtersctx.filtersData = {
-            ...filtersctx.filtersData,
+        filtersctx.setFilters((prev) => { return {
+            ...prev,
             [filterName]: newValue
-        }
+        }})
     }
 
     return (
@@ -27,11 +27,11 @@ export default function Filters() {
                 filtersNames.map((filter, i) => 
                         <div key={i} className="text-center">
                             <p className="m-2">{filter}:</p>
-                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filtersData[filter]} onChange={(e) => {
+                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filters[filter as keyof FiltersType]} onChange={(e) => {
                                 handleFilterChange(e, filter);
                             }}/>
                             <p className="m-2">{filter} lead:</p>
-                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filtersData[filter + ' lead']} onChange={(e) => {
+                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filters[filter + ' lead' as keyof FiltersType]} onChange={(e) => {
                                 handleFilterChange(e, filter + ' lead');
                             }}/>
                         </div>
