@@ -34,15 +34,15 @@ type filterContextType = {
 }
 
 export const filterContext = createContext<filterContextType>({
-  filters: filter as FiltersType,
-  setFilters: () => filter as FiltersType,
+  filters: filter,
+  setFilters: () => filter,
   employees: undefined
 });
 
 export default function Home() {
 
   const [employees, setEmployees] = useState<Employee[] | undefined>(undefined);
-  const [filters, setFilters] = useState<FiltersType>(filter as FiltersType);
+  const [filters, setFilters] = useState<FiltersType>(filter);
 
   useEffect(() => {
     fetch('/api/getSheet')
@@ -60,7 +60,7 @@ export default function Home() {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-white dark:bg-black">
         <filterContext.Provider value={{
-          filters: filters as FiltersType,
+          filters: filters,
           setFilters: setFilters,
           employees: employees
         }}>
