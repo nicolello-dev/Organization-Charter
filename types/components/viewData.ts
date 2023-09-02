@@ -1,8 +1,8 @@
-import type { EmployeeGUIData } from "types/common/employees";
+import type { Employee } from "@prisma/client";
 
 export type Team = {
     name: string
-    employees: EmployeeGUIData[]
+    employees: Employee[]
     lead: string
 }
 

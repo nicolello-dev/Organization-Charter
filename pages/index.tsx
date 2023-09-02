@@ -8,7 +8,7 @@ import ViewData from "@/components/viewData";
 import { filters } from "@/constants/filters";
 
 import { leadmod } from "@/constants/constants";
-import { EmployeeGUIData } from "types/common/employees";
+import { Employee } from "@prisma/client";
 
 const filter: FiltersType = {} as FiltersType;
 filters.forEach(f => {
@@ -30,7 +30,7 @@ export type FiltersType = {
 type filterContextType = {
   filters: FiltersType
   setFilters: React.Dispatch<React.SetStateAction<FiltersType>>
-  employees: EmployeeGUIData[] | undefined
+  employees: Employee[] | undefined
 }
 
 export const filterContext = createContext<filterContextType>({
@@ -41,13 +41,13 @@ export const filterContext = createContext<filterContextType>({
 
 export default function Home() {
 
-  const [employees, setEmployees] = useState<EmployeeGUIData[] | undefined>(undefined);
+  const [employees, setEmployees] = useState<Employee[] | undefined>(undefined);
   const [filters, setFilters] = useState<FiltersType>(filter);
 
   useEffect(() => {
     fetch('/api/getFilteredEmployees')
       .then(r => r.json())
-      .then((r: EmployeeGUIData[]) => setEmployees(r))
+      .then((r: Employee[]) => setEmployees(r))
       .catch(err => console.error(err));
   }, []);
 

@@ -1,17 +1,17 @@
 import { type FiltersType, filterContext } from "@/pages";
 import type { Team, Domain, Tribe, TribeArea } from "@/types/components/viewData";
-import { teamInfo } from "@/lib/components/viewData";
+import { getTeamInfo } from "@/lib/components/viewData";
 import { filters } from "@/constants/filters";
 
 import { useContext } from "react";
 import { leadmod } from "@/constants/constants";
-import { EmployeeGUIData } from "@/types/common/employees";
+import { EmployeeSheetData } from "@/types/common/employees";
 
-type Employee = EmployeeGUIData[] & {
+type Employee = EmployeeSheetData[] & {
     team_lead: string
 }
 
-export default function ViewData(props: {rawData: EmployeeGUIData[] | undefined}){
+export default function ViewData(props: {rawData: EmployeeSheetData[] | undefined}){
     const filtersCtx = useContext(filterContext);
 
     const { rawData } = props;

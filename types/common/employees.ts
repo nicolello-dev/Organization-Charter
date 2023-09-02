@@ -1,17 +1,4 @@
-export type EmployeeGUIData = {
-    id: string
-    name: string
-    team: string
-    functional_lead: string | null
-}
-
-export type EmployeeToBeMade = {
-    name: string
-    team: string
-    functional_lead: string | null
-}
-
-export type EmployeeReq = {
+export type EmployeeFromSheets = {
     id: string
     'Employee Name': string
     Email: string

@@ -1,1 +1,0 @@
-export const leadmod = '_lead';

@@ -26,15 +26,7 @@ model Team {
 model Employee {
   id              String     @id @default(uuid()) @db.Uuid
   name            String
-  team            Team       @relation(fields: [teamName], references: [name])
+  team            Team       @relation(fields: [teamName], references: [name], onDelete: Cascade)
   teamName        String
   functional_lead String?
-  datapoint       Datapoint? @relation(fields: [datapointId], references: [id])
-  datapointId     String?
-}
-
-model Datapoint {
-  id        String     @id @default(uuid())
-  createdAt DateTime   @default(now())
-  employees Employee[]
 }
