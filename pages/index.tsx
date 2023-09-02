@@ -65,6 +65,7 @@ export default function Home() {
           employees: employees
         }}>
           <Filter/>
+            <p className="text-red">Test testing</p>
           <ViewData rawData={employees}/>
         </filterContext.Provider>
       </main>

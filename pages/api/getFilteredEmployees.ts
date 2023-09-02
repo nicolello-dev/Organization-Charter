@@ -13,20 +13,8 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     try {
-        const latestDatapoint = await prisma.datapoint.findFirst({
-            orderBy: {
-                createdAt: 'desc'
-            },
-            select: {
-                id: true
-            }
-        });
-        if (!latestDatapoint || !latestDatapoint.id) {
-            throw new Error("Datapoint does not exist!");
-        }
         const employees = await prisma.employee.findMany({
             where: {
-                datapointId: latestDatapoint.id,
                 name: {
                     contains: name as string
                 }

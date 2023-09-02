@@ -5,13 +5,11 @@ import { filters } from "@/constants/filters";
 
 import { useContext } from "react";
 import { leadmod } from "@/constants/constants";
-import { EmployeeSheetData } from "@/types/common/employees";
 
-type Employee = EmployeeSheetData[] & {
-    team_lead: string
-}
 
-export default function ViewData(props: {rawData: EmployeeSheetData[] | undefined}){
+import type { Employee } from "@prisma/client";
+
+export default function ViewData(props: {rawData: Employee[] | undefined}){
     const filtersCtx = useContext(filterContext);
 
     const { rawData } = props;
