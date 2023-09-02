@@ -5,51 +5,25 @@ import { createContext, useEffect, useState } from "react";
 import Filter from "@/components/filter"
 import ViewData from "@/components/viewData";
 
-import { filters } from "@/constants/filters";
-
-import { leadmod } from "@/constants/constants";
-import { Employee } from "@prisma/client";
-
-const filter: FiltersType = {} as FiltersType;
-filters.forEach(f => {
-  filter[f as keyof FiltersType] = '';
-  filter[f + leadmod as keyof FiltersType] = '';
-})
-
-export type FiltersType = {
-  team: string,
-  "team lead": string,
-  area: string,
-  "area lead": string,
-  function: string,
-  "function lead": string,
-  tribe: string,
-  "tribe lead": string
-}
+import type { Filter as Filters } from "@/types/common/filters";
 
 type filterContextType = {
-  filters: FiltersType
-  setFilters: React.Dispatch<React.SetStateAction<FiltersType>>
-  employees: Employee[] | undefined
+    filters: Filters | undefined,
+    setFilters: React.Dispatch<React.SetStateAction<Filters>> | undefined
 }
 
 export const filterContext = createContext<filterContextType>({
-  filters: filter,
-  setFilters: () => filter,
-  employees: undefined
+  filters: undefined,
+  setFilters: undefined
 });
+
+const initialFilter: Filters = {
+    name: ""
+}
 
 export default function Home() {
 
-  const [employees, setEmployees] = useState<Employee[] | undefined>(undefined);
-  const [filters, setFilters] = useState<FiltersType>(filter);
-
-  useEffect(() => {
-    fetch('/api/getFilteredEmployees')
-      .then(r => r.json())
-      .then((r: Employee[]) => setEmployees(r))
-      .catch(err => console.error(err));
-  }, []);
+  const [filters, setFilters] = useState<Filters>(initialFilter);
 
   return (
     <>
@@ -61,12 +35,11 @@ export default function Home() {
       <main className="flex min-h-screen flex-col items-center justify-center bg-white dark:bg-black">
         <filterContext.Provider value={{
           filters: filters,
-          setFilters: setFilters,
-          employees: employees
+          setFilters: setFilters
         }}>
           <Filter/>
             <p className="text-red">Test testing</p>
-          <ViewData rawData={employees}/>
+          <ViewData/>
         </filterContext.Provider>
       </main>
     </>

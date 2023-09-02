@@ -1,19 +1,22 @@
-import { type FiltersType, filterContext } from "@/pages";
+import { filterContext } from "@/pages";
 import { useContext } from "react";
 
-import { leadmod } from "@/constants/constants";
+import type { Filter } from "@/types/common/filters";
 
 export default function Filters() {
 
     const filtersNames = [
-        'team', 'area', 'function', 'tribe'
+        'name'
     ];
 
     const filtersctx = useContext(filterContext);
 
     function handleFilterChange(e: React.ChangeEvent<HTMLInputElement>, filterName: string) {
         const newValue = e.target.value;
-        filtersctx.setFilters((prev) => { return {
+        if(!filtersctx.setFilters) {
+            return;
+        }
+        filtersctx.setFilters((prev: Filter | undefined) => { return {
             ...prev,
             [filterName]: newValue
         }})
@@ -29,12 +32,8 @@ export default function Filters() {
                 filtersNames.map((filter, i) => 
                         <div key={i} className="text-center">
                             <p className="m-2">{filter}:</p>
-                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filters[filter as keyof FiltersType]} onChange={(e) => {
+                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filters && filtersctx.filters[filter as keyof Filter]} onChange={(e) => {
                                 handleFilterChange(e, filter);
-                            }}/>
-                            <p className="m-2">{filter} lead:</p>
-                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filters[filter + leadmod as keyof FiltersType]} onChange={(e) => {
-                                handleFilterChange(e, filter + leadmod);
                             }}/>
                         </div>
                     )

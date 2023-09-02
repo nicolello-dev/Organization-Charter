@@ -1,24 +1,33 @@
-import { type FiltersType, filterContext } from "@/pages";
-import type { Team, Domain, Tribe, TribeArea } from "@/types/components/viewData";
-import { getTeamInfo } from "@/lib/components/viewData";
-import { filters } from "@/constants/filters";
+import { filterContext } from "@/pages";
 
-import { useContext } from "react";
-import { leadmod } from "@/constants/constants";
-
+import { useContext, useEffect, useState } from "react";
 
 import type { Employee } from "@prisma/client";
 
-export default function ViewData(props: {rawData: Employee[] | undefined}){
+export default function ViewData(){
+
+    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [isLoading, setLoading] = useState<boolean>(false);
     const filtersCtx = useContext(filterContext);
 
-    const { rawData } = props;
-    if(rawData == undefined) {
-        return <h1>Data not yet loaded. Please hang in while the request compiles. If this is the first request of the day, it might take up to 20 seconds</h1>
+    useEffect(() => {
+        fetch(`/api/getFilteredEmployees?name=${filtersCtx.filters?.name}`)
+            .then(r => r.json())
+            .then(r => {
+                setEmployees(r as Employee[]);
+                setLoading(false);
+            })
+    }, [filtersCtx.filters?.name]);
+
+    if(isLoading) {
+        return <h1 className="text-xl">Loading...</h1>
     }
+    
     return <>
-        <h1>
-            WIP!
-        </h1>
+        <p>
+            {
+                JSON.stringify(employees)
+            }
+        </p>
     </>
 }

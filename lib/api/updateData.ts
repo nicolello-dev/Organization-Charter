@@ -46,7 +46,8 @@ export async function updateData() {
 
     console.log("Employees requested from API, loading into DB");
     
-    await prisma.employee.deleteMany({});
+    await prisma.employee.deleteMany();
+    console.log(await prisma.employee.count());
     await prisma.employee.createMany({
         data: employeeData.map((employee, i) => {
             return {
