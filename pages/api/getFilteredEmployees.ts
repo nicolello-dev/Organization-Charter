@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export default async function Handler(req: NextApiRequest, res: NextApiResponse<Employee[]>) {
 
-    const { name, functionalLead, teamName, teamLead, domain, domainLead, tribeArea, tribeAreaLead, tribe, tribeLead } = req.query;
+    const { name, functionalLead, teamName, teamLead, domain, domainLead, tribeArea, tribeAreaLead, tribe, tribeLead } = req.query as {[key: string]: string | undefined};
 
     try {
         console.log(name, functionalLead, teamName, teamLead, domain, domainLead, tribeArea, tribeAreaLead, tribe, tribeLead);
