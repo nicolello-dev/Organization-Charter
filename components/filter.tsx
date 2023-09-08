@@ -5,18 +5,16 @@ import type { Filter } from "@/types/common/filters";
 
 export default function Filters() {
 
-    const filtersNames = [
-        'name'
-    ];
-
     const filtersctx = useContext(filterContext);
 
+    const filtersNames = Object.keys(filtersctx.filters);
+    
     function handleFilterChange(e: React.ChangeEvent<HTMLInputElement>, filterName: string) {
         const newValue = e.target.value;
         if(!filtersctx.setFilters) {
             return;
         }
-        filtersctx.setFilters((prev: Filter | undefined) => { return {
+        filtersctx.setFilters((prev: Filter) => { return {
             ...prev,
             [filterName]: newValue
         }})

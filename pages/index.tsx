@@ -8,18 +8,27 @@ import ViewData from "@/components/viewData";
 import type { Filter as Filters } from "@/types/common/filters";
 
 type filterContextType = {
-    filters: Filters | undefined,
+    filters: Filters,
     setFilters: React.Dispatch<React.SetStateAction<Filters>> | undefined
 }
 
+const initialFilter: Filters = {
+    name: "",
+    functionalLead: "",
+    teamName: "",
+    teamLead: "",
+    domain: "",
+    domainLead: "",
+    tribe: "",
+    tribeLead: "",
+    tribeArea: "",
+    tribeAreaLead: ""
+}
+
 export const filterContext = createContext<filterContextType>({
-  filters: undefined,
+  filters: initialFilter,
   setFilters: undefined
 });
-
-const initialFilter: Filters = {
-    name: ""
-}
 
 export default function Home() {
 
