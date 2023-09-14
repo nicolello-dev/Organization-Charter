@@ -1,8 +1,10 @@
 import { filterContext } from "@/pages";
 
-import { useContext, useEffect, useState } from "react";
+import { Context, useContext, useEffect, useState } from "react";
 
 import type { Employee, Team } from "@prisma/client";
+
+import type { filterContextType } from "@/pages/index";
 
 import { groupBy } from "@/lib/groupBy";
 import Tribe from "@/components/tribe";
@@ -11,20 +13,12 @@ interface EmployeeWithTeam extends Employee {
     team: Team;
 }
 
-export default function ViewData(){
+export default function ViewData({ tribes, isLoading, fetchNewData }: { tribes: Record<string, EmployeeWithTeam[]>, isLoading: boolean, fetchNewData:(filtersCtx: filterContextType) => void }) {
 
-    const [tribes, setTribes] = useState<Record<string, EmployeeWithTeam[]>>({} as Record<string, EmployeeWithTeam[]>);
-    const [isLoading, setLoading] = useState<boolean>(false);
     const filtersCtx = useContext(filterContext);
 
     useEffect(() => {
-        fetch(`/api/getFilteredEmployees?name=${filtersCtx.filters.name}&functionalLead=${filtersCtx.filters.functionalLead}&teamName=${filtersCtx.filters.teamName}&teamLead=${filtersCtx.filters.teamLead}&domain=${filtersCtx.filters.domain}&domainLead=${filtersCtx.filters.domainLead}&tribeArea=${filtersCtx.filters.tribeArea}&tribeAreaLead=${filtersCtx.filters.tribeAreaLead}&tribe=${filtersCtx.filters.tribe}&tribeLead=${filtersCtx.filters.tribeLead}`)
-            .then(r => r.json())
-            .then((r: EmployeeWithTeam[]) => {
-                const t = groupBy(r, (e: EmployeeWithTeam) => e.team.tribe || "");
-                setTribes(t);
-                setLoading(false);
-            })
+        fetchNewData(filtersCtx);
     }, [filtersCtx.filters?.name]);
 
     if(isLoading) {

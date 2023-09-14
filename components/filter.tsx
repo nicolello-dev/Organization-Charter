@@ -1,9 +1,9 @@
-import { filterContext } from "@/pages";
+import { filterContext, filterContextType } from "@/pages";
 import { useContext } from "react";
 
 import type { Filter } from "@/types/common/filters";
 
-export default function Filters() {
+export default function Filters({ handleReloadFilters }: { handleReloadFilters: (filtersCtx: filterContextType) => void } ) {
 
     const filtersctx = useContext(filterContext);
 
@@ -37,7 +37,7 @@ export default function Filters() {
                     )
             }
         </div>
-        <button className="bg-black text-white p-3 m-4 rounded-xl">
+        <button className="bg-black text-white p-3 m-4 rounded-xl" onClick={_ => handleReloadFilters(filtersctx)}>
             Filter
         </button>
         </>

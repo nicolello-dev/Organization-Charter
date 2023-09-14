@@ -1,13 +1,15 @@
 import Head from "next/head";
 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import Filter from "@/components/filter"
 import ViewData from "@/components/viewData";
 
 import type { Filter as Filters } from "@/types/common/filters";
+import { EmployeeWithTeam } from "@/types/common/employees";
+import { groupBy } from "@/lib/groupBy";
 
-type filterContextType = {
+export type filterContextType = {
     filters: Filters,
     setFilters: React.Dispatch<React.SetStateAction<Filters>> | undefined
 }
@@ -33,6 +35,18 @@ export const filterContext = createContext<filterContextType>({
 export default function Home() {
 
   const [filters, setFilters] = useState<Filters>(initialFilter);
+  const [tribes, setTribes] = useState<Record<string, EmployeeWithTeam[]>>({} as Record<string, EmployeeWithTeam[]>);
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  function fetchNewData(filtersCtx: filterContextType) {
+      fetch(`/api/getFilteredEmployees?name=${filtersCtx.filters.name}&functionalLead=${filtersCtx.filters.functionalLead}&teamName=${filtersCtx.filters.teamName}&teamLead=${filtersCtx.filters.teamLead}&domain=${filtersCtx.filters.domain}&domainLead=${filtersCtx.filters.domainLead}&tribeArea=${filtersCtx.filters.tribeArea}&tribeAreaLead=${filtersCtx.filters.tribeAreaLead}&tribe=${filtersCtx.filters.tribe}&tribeLead=${filtersCtx.filters.tribeLead}`)
+          .then(r => r.json())
+          .then((r: EmployeeWithTeam[]) => {
+              const t = groupBy(r, (e: EmployeeWithTeam) => e.team.tribe || "");
+              setTribes(t);
+              setLoading(false);
+          })
+  }
 
   return (
     <>
@@ -46,8 +60,8 @@ export default function Home() {
           filters: filters,
           setFilters: setFilters
         }}>
-          <Filter/>
-          <ViewData/>
+          <Filter handleReloadFilters={fetchNewData}/>
+          <ViewData tribes={tribes} isLoading={isLoading} fetchNewData={fetchNewData}/>
         </filterContext.Provider>
       </main>
     </>
