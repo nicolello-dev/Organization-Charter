@@ -4,8 +4,6 @@ import { useContext, useEffect, useState } from "react";
 
 import type { Employee, Team } from "@prisma/client";
 
-import Empl from "@/components/Employee";
-
 import { groupBy } from "@/lib/groupBy";
 import TribeArea from "./tribeArea";
 
@@ -15,7 +13,7 @@ interface EmployeeWithTeam extends Employee {
 
 export default function ViewData(){
 
-    const [tribeAreas, setTribeAreas] = useState<Record<string, EmployeeWithTeam[]>>({} as Record<string, EmployeeWithTeam[]>);
+    const [tribes, setTribes] = useState<Record<string, EmployeeWithTeam[]>>({} as Record<string, EmployeeWithTeam[]>);
     const [isLoading, setLoading] = useState<boolean>(false);
     const filtersCtx = useContext(filterContext);
 
@@ -23,11 +21,9 @@ export default function ViewData(){
         fetch(`/api/getFilteredEmployees?name=${filtersCtx.filters.name}&functionalLead=${filtersCtx.filters.functionalLead}&teamName=${filtersCtx.filters.teamName}&teamLead=${filtersCtx.filters.teamLead}&domain=${filtersCtx.filters.domain}&domainLead=${filtersCtx.filters.domainLead}&tribeArea=${filtersCtx.filters.tribeArea}&tribeAreaLead=${filtersCtx.filters.tribeAreaLead}&tribe=${filtersCtx.filters.tribe}&tribeLead=${filtersCtx.filters.tribeLead}`)
             .then(r => r.json())
             .then((r: EmployeeWithTeam[]) => {
-                const t = groupBy(r, (e: EmployeeWithTeam) => e.team.tribe_area || "");
-                console.log(t);
-                setTribeAreas(t);
+                const t = groupBy(r, (e: EmployeeWithTeam) => e.team.tribe || "");
+                setTribes(t);
                 setLoading(false);
-                console.log(tribeAreas);
             })
     }, [filtersCtx.filters?.name]);
 
@@ -37,19 +33,32 @@ export default function ViewData(){
 
     return <>
         {
-            Object.keys(tribeAreas).map(tribeName => {
-                const tribeAreaEmployees = tribeAreas[tribeName];
-                return <>
-                <div className="flex flex-col">
+            Object.keys(tribes).map((tribeName, i) => {
+                const tribeEmployees = tribes[tribeName];
+                if (!tribeEmployees) return null;
+                const tribeAreas = groupBy(
+                  tribeEmployees,
+                  (e: EmployeeWithTeam) => e.team.tribe_area || ""
+                );
+                return (
+                  <div key={i} className="flex flex-col">
                     <h1 className="text-2xl">{tribeName}</h1>
-                    <div className="flex flex-col">
-                        {
-                            tribeAreaEmployees?.map((e: EmployeeWithTeam) => <TribeArea key={e.id} employees={tribeAreaEmployees}/>)
-                        }
-                    </div>
-                </div>
-                </>
-            })
+                    {
+                        Object.keys(tribeAreas).map((tribeAreaName, i) => {
+                            const tribeAreaEmployees = tribeAreas[tribeAreaName];
+                            if (!tribeAreaEmployees) return null;
+                            return (
+                              <TribeArea
+                                key={i}
+                                employees={tribeAreaEmployees}
+                                tribeAreaName={tribeAreaName}
+                              />
+                            );
+                        })
+                    }
+                  </div>
+                );
+              })
         }
     </>
 }
