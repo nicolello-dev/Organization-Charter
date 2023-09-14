@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import type { Employee, Team } from "@prisma/client";
 
 import { groupBy } from "@/lib/groupBy";
-import TribeArea from "./tribeArea";
+import Tribe from "@/components/tribe";
 
 interface EmployeeWithTeam extends Employee {
     team: Team;
@@ -36,28 +36,7 @@ export default function ViewData(){
             Object.keys(tribes).map((tribeName, i) => {
                 const tribeEmployees = tribes[tribeName];
                 if (!tribeEmployees) return null;
-                const tribeAreas = groupBy(
-                  tribeEmployees,
-                  (e: EmployeeWithTeam) => e.team.tribe_area || ""
-                );
-                return (
-                  <div key={i} className="flex flex-col">
-                    <h1 className="text-2xl">{tribeName}</h1>
-                    {
-                        Object.keys(tribeAreas).map((tribeAreaName, i) => {
-                            const tribeAreaEmployees = tribeAreas[tribeAreaName];
-                            if (!tribeAreaEmployees) return null;
-                            return (
-                              <TribeArea
-                                key={i}
-                                employees={tribeAreaEmployees}
-                                tribeAreaName={tribeAreaName}
-                              />
-                            );
-                        })
-                    }
-                  </div>
-                );
+                return <Tribe key={i} tribeName={tribeName} employees={tribeEmployees} />
               })
         }
     </>
