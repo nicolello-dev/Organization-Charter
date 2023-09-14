@@ -1,3 +1,5 @@
+import { Employee, Team } from "@prisma/client"
+
 export type EmployeeFromSheets = {
     id: string
     'Employee Name': string
@@ -11,4 +13,8 @@ export type EmployeeFromSheets = {
     Office: string
     "Legal Entity in List": string
     "PMD Creator": string
+}
+
+export type EmployeeWithTeam = Employee & {
+    team: Team
 }
