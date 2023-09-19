@@ -11,11 +11,11 @@ import { Type as TribeTypes } from "@prisma/client";
 function borderColor(tribeType: TribeTypes) {
     switch(tribeType) {
         case "ProductOffering":
-            return "border-[#76909b]";
+            return "PO";
         case "Global":
-            return "border-[#c57c9f]";
+            return "Global";
         default:
-            return "border-[#0097a6]";
+            return "RB";
     }
 }
 
@@ -23,11 +23,12 @@ export default function TribeArea({ employees, tribeAreaName }: { employees: Emp
     const domains = groupBy(employees, (e: EmployeeWithTeam) => e.team.domain || "");
     const color = borderColor(employees[0]?.team.type ?? "Global");
 
-    return <div className={`${visualClasses} ${color}`}>
+    return <div className={`${visualClasses} border-[${color}]`}>
         <h2 className="text-2xl">{tribeAreaName || "No tribe area"}</h2>
+        <p>{employees[0]?.team.tribe_area_lead}</p>
         {
             Object.entries(domains).map(([tribeArea, employees], i) => {
-                return <Domain key={i} domainName={tribeArea} employees={employees} />
+                return <Domain key={i} domainName={tribeArea} employees={employees} color={color}/>
             })
         }
     </div>

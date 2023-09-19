@@ -5,3 +5,15 @@
 body {
     font-family: "Comic Sans MS", sans-serif;
 }
+
+.bg-\[PO\] {
+    background-color: #76909b;
+}
+
+.bg-\[Global\] {
+    background-color: #c57c9f;
+}
+
+.bg-\[RB\] {
+    background-color: #0097a6;
+}

@@ -6,7 +6,10 @@ export default {
       colors: {
         'tribe': '#1c4587',
         'function': '#3c78d8',
-        'area': '#15c'
+        'area': '#15c',
+        'PO': '#76909b',
+        'global': '#c57c9f',
+        'RB': '#0097a6'
       }
     },
   },

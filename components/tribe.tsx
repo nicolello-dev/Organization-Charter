@@ -8,10 +8,13 @@ export default function Tribe({ tribeName, employees }: { tribeName: string, emp
     const tribeAreas = groupBy(employees, (e: EmployeeWithTeam) => e.team.tribe_area || "");
     return <div className={`${visualClasses} border-black`}>
         <h1 className="text-4xl">{tribeName}</h1>
-        {
-            Object.entries(tribeAreas).map(([tribeArea, employees], i) => {
-                return <TribeArea key={i} tribeAreaName={tribeArea} employees={employees} />
-            })
-        }
+        <p>{employees[0]?.team.tribe_lead}</p>
+        <div className="flex flex-row flex-wrap justify-center">
+            {
+                Object.entries(tribeAreas).map(([tribeArea, employees], i) => {
+                    return <TribeArea key={i} tribeAreaName={tribeArea} employees={employees} />
+                })
+            }
+        </div>
     </div>
 }
