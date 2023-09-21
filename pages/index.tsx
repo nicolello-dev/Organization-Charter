@@ -63,7 +63,22 @@ export default function Home({ uniqueValues }: { uniqueValues: {[key in keyof Te
           setFilters: setFilters
         }}>
           <Filter handleReloadFilters={fetchNewData} uniqueValues={uniqueValues}/>
-          <ViewData tribes={tribes} isLoading={isLoading} fetchNewData={fetchNewData}/>
+          {
+            Object.keys(tribes).length ? <>
+              <ViewData tribes={tribes} isLoading={isLoading} fetchNewData={fetchNewData}/>
+            </> : <>
+              <h1 className="mx-auto text-center text-4xl my-16">No data available. Please set a filter if you haven&apos;t</h1>
+              <p className="text-center mx-auto bg-red-200 p-3 border rounded-xl">
+                Did you want to see all employees?&nbsp;
+                <button className="underline" onClick={_ => fetchNewData({
+                    filters: initialFilter,
+                    setFilters: undefined
+                  })}>
+                    Click me instead
+                </button>
+              </p>
+            </>
+          }
         </filterContext.Provider>
       </main>
     </>

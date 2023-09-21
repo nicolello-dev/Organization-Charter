@@ -34,6 +34,8 @@ function prettify(str: string) {
     }
 }
 
+let firstLoad = true;
+
 export default function Filters(
     {
         handleReloadFilters,
@@ -62,7 +64,8 @@ export default function Filters(
     }
 
     useEffect(() => {
-        handleReloadFilters(filtersctx);
+        !firstLoad && handleReloadFilters(filtersctx);
+        firstLoad = false;
     }, [filtersctx.filters]);
 
     return (
