@@ -2,21 +2,62 @@ import { filterContext, filterContextType } from "@/pages";
 import { useContext } from "react";
 
 import type { Filter } from "@/types/common/filters";
+import { Team } from "@prisma/client";
+import { nonSelectedString } from "@/constants/constants";
 
-export default function Filters({ handleReloadFilters }: { handleReloadFilters: (filtersCtx: filterContextType) => void } ) {
+function keyofTeam2filterContext(key: keyof Team): keyof filterContextType["filters"] | string {
+    switch(key) {
+        case "name":
+            return "teamName";
+        case "domain_lead":
+            return "domainLead";
+        case "team_lead":
+            return "teamLead";
+        case "tribe_area":
+            return "tribeArea";
+        case "tribe_area_lead":
+            return "tribeAreaLead";
+        case "tribe_lead":
+            return "tribeLead";
+        default:
+            // eslint-disable-next-line
+            return key
+    }
+}
+
+function prettify(str: string) {
+    switch(str) {
+        case "name":
+            return "team name";
+        default:
+            return str.replaceAll("_", " ");
+    }
+}
+
+export default function Filters(
+    {
+        handleReloadFilters,
+        uniqueValues
+    }:{ 
+        handleReloadFilters: (filtersCtx: filterContextType) => void,
+        uniqueValues: {[key in keyof Team]: (string | null)[] | undefined}
+    }
+) {
+
+    Object.keys(uniqueValues).forEach(key => {
+        uniqueValues[key as keyof Team] = uniqueValues[key as keyof Team]?.filter(v => ![undefined, null, ""].includes(v));
+    });
 
     const filtersctx = useContext(filterContext);
-
-    const filtersNames = Object.keys(filtersctx.filters);
     
-    function handleFilterChange(e: React.ChangeEvent<HTMLInputElement>, filterName: string) {
+    function handleFilterChange(e: React.ChangeEvent<HTMLSelectElement>, filterName: keyof Team) {
         const newValue = e.target.value;
         if(!filtersctx.setFilters) {
             return;
         }
         filtersctx.setFilters((prev: Filter) => { return {
             ...prev,
-            [filterName]: newValue
+            [keyofTeam2filterContext(filterName)]: newValue == nonSelectedString ? "" : newValue
         }})
     }
 
@@ -27,12 +68,20 @@ export default function Filters({ handleReloadFilters }: { handleReloadFilters: 
         </h1>
         <div className="flex flex-row gap-4 flex-wrap justify-center">
             {
-                filtersNames.map((filter, i) => 
-                        <div key={i} className="text-center">
-                            <p className="m-2">{filter}:</p>
-                            <input className="border-gray-300 border-2 mb-4 p-1" type="text" defaultValue={filtersctx.filters && filtersctx.filters[filter as keyof Filter]} onChange={(e) => {
-                                handleFilterChange(e, filter);
-                            }}/>
+                Object.keys(uniqueValues).map((filter, i) => 
+                        // Exclude the type filter since it's not used in the filter API
+                        filter != "type" && <div key={i} className="text-center m-1 p-2 border rounded-xl border-gray-200">
+                            <p className="m-2">{prettify(filter)}:</p>
+                            <select onChange={e => handleFilterChange(e, filter as keyof Team)}>
+                                <option>
+                                    {nonSelectedString}
+                                </option>
+                                {
+                                    uniqueValues[filter as keyof Team]?.map((value, i) => 
+                                        <option key={i} value={value || ""}>{value}</option>
+                                    )
+                                }
+                            </select>
                         </div>
                     )
             }

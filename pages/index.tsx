@@ -8,6 +8,8 @@ import ViewData from "@/components/viewData";
 import type { Filter as Filters } from "@/types/common/filters";
 import { EmployeeWithTeam } from "@/types/common/employees";
 import { groupBy } from "@/lib/groupBy";
+import { prisma } from "@/prisma/prisma";
+import { Team } from "@prisma/client";
 
 export type filterContextType = {
     filters: Filters,
@@ -32,7 +34,7 @@ export const filterContext = createContext<filterContextType>({
   setFilters: undefined
 });
 
-export default function Home() {
+export default function Home({ uniqueValues }: { uniqueValues: {[key in keyof Team]: (string | null)[] | undefined}}) {
 
   const [filters, setFilters] = useState<Filters>(initialFilter);
   const [tribes, setTribes] = useState<Record<string, EmployeeWithTeam[]>>({} as Record<string, EmployeeWithTeam[]>);
@@ -60,10 +62,61 @@ export default function Home() {
           filters: filters,
           setFilters: setFilters
         }}>
-          <Filter handleReloadFilters={fetchNewData}/>
+          <Filter handleReloadFilters={fetchNewData} uniqueValues={uniqueValues}/>
           <ViewData tribes={tribes} isLoading={isLoading} fetchNewData={fetchNewData}/>
         </filterContext.Provider>
       </main>
     </>
   );
+}
+
+export async function getServerSideProps() {
+
+  const teams = await prisma.team.findMany();
+  const team = await prisma.team.findFirst();
+  if(!team) {
+    return {
+      props: {
+
+      }
+    }
+  }
+
+  const allValues: {
+    [key in keyof Team]: Set<(string | null)>
+  } = {
+    name: new Set(),
+    team_lead: new Set(),
+    domain: new Set(),
+    domain_lead: new Set(),
+    tribe: new Set(),
+    tribe_lead: new Set(),
+    tribe_area: new Set(),
+    tribe_area_lead: new Set(),
+    type: new Set()
+  };
+  teams.forEach(team => {
+    Object.keys(team).forEach((key: string) => {
+      allValues[key as keyof Team].add(team[key as keyof Team])
+    })
+  })
+  // Convert into array so it's JSON-able
+  const uniqueValues : {
+    [key in keyof Team]: (string | null)[]
+  } = {
+    name: Array.from(allValues.name),
+    team_lead: Array.from(allValues.team_lead),
+    domain: Array.from(allValues.domain),
+    domain_lead: Array.from(allValues.domain_lead),
+    tribe: Array.from(allValues.tribe),
+    tribe_lead: Array.from(allValues.tribe_lead),
+    tribe_area: Array.from(allValues.tribe_area),
+    tribe_area_lead: Array.from(allValues.tribe_area_lead),
+    type: Array.from(allValues.type)
+  }
+  return {
+    props: {
+      uniqueValues
+    }
+  }
 }
