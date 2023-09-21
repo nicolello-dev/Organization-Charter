@@ -1,5 +1,5 @@
 import { filterContext, filterContextType } from "@/pages";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 import type { Filter } from "@/types/common/filters";
 import { Team } from "@prisma/client";
@@ -58,8 +58,12 @@ export default function Filters(
         filtersctx.setFilters((prev: Filter) => { return {
             ...prev,
             [keyofTeam2filterContext(filterName)]: newValue == nonSelectedString ? "" : newValue
-        }})
+        }});
     }
+
+    useEffect(() => {
+        handleReloadFilters(filtersctx);
+    }, [filtersctx.filters]);
 
     return (
         <>
@@ -86,9 +90,6 @@ export default function Filters(
                     )
             }
         </div>
-        <button className="bg-black text-white p-3 m-4 rounded-xl" onClick={_ => handleReloadFilters(filtersctx)}>
-            Filter
-        </button>
         </>
     )
 }
