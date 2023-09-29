@@ -25,7 +25,7 @@ export default function TribeArea({ employees, tribeAreaName }: { employees: Emp
 
     return <div className={`${visualClasses} border-[${color}]`}>
         <h2 className="text-2xl">{tribeAreaName || "No tribe area"}</h2>
-        <p>{employees[0]?.team.tribe_area_lead}</p>
+        <p className="p-1 bg-blue-400 w-max">{employees[0]?.team.tribe_area_lead || "No tribe area lead"}</p>
         {
             Object.entries(domains).map(([tribeArea, employees], i) => {
                 return <Domain key={i} domainName={tribeArea} employees={employees} color={color}/>

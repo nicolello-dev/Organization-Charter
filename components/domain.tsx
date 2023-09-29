@@ -10,7 +10,7 @@ export default function Domain({ employees, domainName, color }: { employees: Em
     const teams = groupBy(employees, (e: EmployeeWithTeam) => e.team.name || "");
     return <div className={`${visualClasses} border-[${color}] bg-[${color}]`}>
         <h3 className="text-xl">{domainName || "No domain"}</h3>
-        <p>{employees[0]?.team.domain_lead}</p>
+        <p className="p-1 bg-blue-400 w-max">{employees[0]?.team.domain_lead || "No domain lead"}</p>
         {
             Object.entries(teams).map(([teamName, employees], i) => {
                 return <Team key={i} teamName={teamName} employees={employees} />
