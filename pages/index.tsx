@@ -41,7 +41,7 @@ export default function Home({ uniqueValues }: { uniqueValues: {[key in keyof Te
   const [isLoading, setLoading] = useState<boolean>(false);
 
   function fetchNewData(filtersCtx: filterContextType) {
-      fetch(`/api/getFilteredEmployees?name=${filtersCtx.filters.name}&functionalLead=${filtersCtx.filters.functionalLead}&teamName=${filtersCtx.filters.teamName}&teamLead=${filtersCtx.filters.teamLead}&domain=${filtersCtx.filters.domain}&domainLead=${filtersCtx.filters.domainLead}&tribeArea=${filtersCtx.filters.tribeArea}&tribeAreaLead=${filtersCtx.filters.tribeAreaLead}&tribe=${filtersCtx.filters.tribe}&tribeLead=${filtersCtx.filters.tribeLead}`)
+      fetch(`/api/getFilteredEmployees?&name=${filtersCtx.filters.name}&functionalLead=${filtersCtx.filters.functionalLead}&teamName=${filtersCtx.filters.teamName}&teamLead=${filtersCtx.filters.teamLead}&domain=${filtersCtx.filters.domain}&domainLead=${filtersCtx.filters.domainLead}&tribeArea=${filtersCtx.filters.tribeArea}&tribeAreaLead=${filtersCtx.filters.tribeAreaLead}&tribe=${filtersCtx.filters.tribe}&tribeLead=${filtersCtx.filters.tribeLead}`)
           .then(r => r.json())
           .then((r: EmployeeWithTeam[]) => {
               const t = groupBy(r, (e: EmployeeWithTeam) => e.team.tribe || "");
@@ -67,7 +67,12 @@ export default function Home({ uniqueValues }: { uniqueValues: {[key in keyof Te
             Object.keys(tribes).length ? <>
               <ViewData tribes={tribes} isLoading={isLoading} fetchNewData={fetchNewData}/>
             </> : <>
-              <h1 className="mx-auto text-center text-4xl my-16">No data available. Please set a filter if you haven&apos;t</h1>
+              <h1 className="mx-auto text-center text-4xl mt-16 px-8">
+                No data to display.
+              </h1>
+              <h2 className="mx-auto text-center text-xl my-8 px-4 mb-16">
+              Select a filter if you haven&apos;t, otherwise, no team member with the selected filters exist.
+              </h2>
               <p className="text-center mx-auto bg-red-200 p-3 border rounded-xl">
                 Did you want to see all employees?&nbsp;
                 <button className="underline" onClick={_ => fetchNewData({
@@ -88,17 +93,21 @@ export default function Home({ uniqueValues }: { uniqueValues: {[key in keyof Te
 export async function getServerSideProps() {
 
   const teams = await prisma.team.findMany();
-  const team = await prisma.team.findFirst();
-  if(!team) {
+  const employees = (await prisma.employee.findMany({
+    select: {
+      name: true
+    }
+  })).map(e => e.name);
+
+  if(!teams.length) {
     return {
       props: {
-
       }
     }
   }
 
   const allValues: {
-    [key in keyof Team]: Set<(string | null)>
+    [key in keyof Team]: Set<(string)>
   } = {
     name: new Set(),
     team_lead: new Set(),
@@ -110,15 +119,20 @@ export async function getServerSideProps() {
     tribe_area_lead: new Set(),
     type: new Set()
   };
+
+  // Add all values to the corresponding set
   teams.forEach(team => {
-    Object.keys(team).forEach((key: string) => {
-      allValues[key as keyof Team].add(team[key as keyof Team])
-    })
+    // @ts-ignore
+    Object.keys(team).forEach((key: string) => allValues[key as keyof Team].add(team[key as keyof Team]))
   })
-  // Convert into array so it's JSON-able
-  const uniqueValues : {
-    [key in keyof Team]: (string | null)[]
+
+  // Convert into array so it's JSON-izable
+  const uniqueValues: {
+    employees: string[]
+  } & {
+    [key in keyof Team]: (Array<string | null>)
   } = {
+    employees,
     name: Array.from(allValues.name),
     team_lead: Array.from(allValues.team_lead),
     domain: Array.from(allValues.domain),

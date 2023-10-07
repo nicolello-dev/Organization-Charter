@@ -5,8 +5,11 @@ import type { Filter } from "@/types/common/filters";
 import { Team } from "@prisma/client";
 import { nonSelectedString } from "@/constants/constants";
 
-function keyofTeam2filterContext(key: keyof Team): keyof filterContextType["filters"] | string {
+function keyofTeam2filterContext(key: keyof Team & "employees"): keyof filterContextType["filters"] | string {
+    console.log("Here!", key)
     switch(key) {
+        case "employees":
+            return "name";
         case "name":
             return "teamName";
         case "domain_lead":
@@ -27,6 +30,8 @@ function keyofTeam2filterContext(key: keyof Team): keyof filterContextType["filt
 
 function prettify(str: string) {
     switch(str) {
+        case "employees":
+            return "Team member"
         case "name":
             return "team name";
         default:
@@ -46,13 +51,14 @@ export default function Filters(
     }
 ) {
 
+    // Exclude empty values
     Object.keys(uniqueValues).forEach(key => {
         uniqueValues[key as keyof Team] = uniqueValues[key as keyof Team]?.filter(v => ![undefined, null, ""].includes(v));
     });
 
     const filtersctx = useContext(filterContext);
     
-    function handleFilterChange(e: React.ChangeEvent<HTMLSelectElement>, filterName: keyof Team) {
+    function handleFilterChange(e: React.ChangeEvent<HTMLSelectElement>, filterName: keyof Team & "employees") {
         const newValue = e.target.value;
         if(!filtersctx.setFilters) {
             return;
@@ -79,7 +85,7 @@ export default function Filters(
                         // Exclude the type filter since it's not used in the filter API
                         filter != "type" && <div key={i} className="text-center m-1 p-2 border rounded-xl border-gray-200">
                             <p className="m-2">{prettify(filter)}:</p>
-                            <select onChange={e => handleFilterChange(e, filter as keyof Team)}>
+                            <select onChange={e => handleFilterChange(e, filter as keyof Team & "employees")}>
                                 <option>
                                     {nonSelectedString}
                                 </option>
