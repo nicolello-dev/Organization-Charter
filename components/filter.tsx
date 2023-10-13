@@ -39,6 +39,39 @@ function prettify(str: string) {
     }
 }
 
+function Legend() {
+    const colors = [
+        {
+            name: "Tribe",
+            color: "#000000"
+        },
+        {
+            name: "Product Offering",
+            color: "#76909b"
+        },
+        {
+            name: "Global",
+            color: "#c57c9f"
+        },
+        {
+            name: "Regional Business",
+            color: "#0097a6"
+        }
+    ];
+
+    return <div className="flex flex-row gap-4 my-6">
+        Legend:
+        {
+            colors.map((color, i) => {
+                return <div key={i} className="flex flex-row items-center gap-2">
+                    <div className="w-4 h-4 rounded-full" style={{backgroundColor: color.color}}></div>
+                    <p>{color.name}</p>
+                </div>
+            })
+        }
+    </div>
+}
+
 let firstLoad = true;
 
 export default function Filters(
@@ -99,6 +132,7 @@ export default function Filters(
                     )
             }
         </div>
+        <Legend/>
         </>
     )
 }
