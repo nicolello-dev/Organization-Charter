@@ -35,7 +35,8 @@
     "react-select": "^5.7.7",
     "ssl": "^1.0.0",
     "tailwindcss": "3.3.2",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "vercel": "^33.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.2",
