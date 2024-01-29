@@ -1,6 +1,7 @@
 import { filterContext, filterContextType } from "@/pages";
 import React, { useContext, useEffect } from "react";
-import Select, { createFilter } from "react-select";
+import Select from "react-select";
+import { filterOption } from "@/lib/selectFilterOption";
 
 import type { Filter } from "@/types/common/filters";
 import { Team } from "@prisma/client";
@@ -89,12 +90,6 @@ export default function Filters({
   handleReloadFilters: (filtersCtx: filterContextType) => void;
   uniqueValues: { [key in keyof Team]: (string | null)[] | undefined };
 }) {
-  const selectFilters = createFilter({
-    ignoreAccents: true,
-    ignoreCase: true,
-    matchFrom: "any",
-  });
-
   // Exclude empty values
   Object.keys(uniqueValues).forEach((key) => {
     uniqueValues[key as keyof Team] = uniqueValues[key as keyof Team]?.filter(
@@ -152,7 +147,7 @@ export default function Filters({
               <p className="m-2">{prettify(filter)}:</p>
               <Select
                 className="min-w-[150px]"
-                filterOption={selectFilters}
+                filterOption={filterOption}
                 onChange={(e: any) =>
                   handleFilterChange(
                     {
