@@ -36,4 +36,5 @@ model Employee {
   team            Team    @relation(fields: [teamName], references: [name], onDelete: Cascade)
   teamName        String
   functional_lead String?
+  position        String?
 }
